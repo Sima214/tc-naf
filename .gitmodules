@@ -1,0 +1,3 @@
+[submodule "SS-CE"]
+	path = SS-CE
+	url = https://github.com/Sima214/SS-CE.git
