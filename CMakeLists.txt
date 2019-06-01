@@ -41,6 +41,13 @@ if( NOT RE2C )
     message( SEND_ERROR "Could not find lexical analyzer!\nPlease install `re2c` and it to the path." )
 else()
     message( "Found lexical analyzer: ${RE2C}" )
+    add_custom_command(
+        COMMAND ${RE2C} -W -P -o "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" "${PROJECT_SOURCE_DIR}/src/tokenizer.l"
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp"
+        BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp"
+        DEPENDS "${PROJECT_SOURCE_DIR}/src/tokenizer.l" 
+        COMMENT "Generating tokenizer..." VERBATIM
+    )
 endif()
 
 ## Generate grammar parser.
@@ -51,7 +58,7 @@ file( GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.c*" )
 include_directories( "${PROJECT_SOURCE_DIR}/src/" )
 
 ## Define the executable
-add_executable( ${PROJECT_NAME} ${SRCS} )
+add_executable( ${PROJECT_NAME} ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" )
 target_link_libraries( ${PROJECT_NAME} ssce )
 
 ## Compiler options.

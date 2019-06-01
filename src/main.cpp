@@ -1,18 +1,31 @@
+#include <tokenizer.hpp>
+
 #include <GAlloc.hpp>
 #include <Logger.hpp>
 
 #include <cstdlib>
-#include <fstream>
+#include <cstdio>
 
 inline bool process_file(char* p) {
-  std::ifstream f(p);
-  if(f.good()) {
-    ssce::logi("Processing file `%s`...", p);
+  FILE* f = fopen(p, "rb");
+  if(f != NULL) {
+    // Find size of input file.
+    fseek(f, 0, SEEK_END);
+    size_t fs = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    // Read file into C string.
+    char* input = (char*)malloc(fs + 1);
+    fread(input, sizeof(char), fs, f);
+    input[fs] = '\0';
+    fclose(f);
+    // File is loaded in mem and ready to be processed.
+    ssce::logi("Processing file `%s`(%zu bytes)...", p, fs);
+    // Start compilation.
+    tcnaf::tokenize(input);
     return true;
-  } else {
-    ssce::loge("Could not open file: `%s`!", p);
-    return false;
   }
+  ssce::loge("Could not open file: `%s`!", p);
+  return false;
 }
 
 int main(int argc, char* argv[]) {
