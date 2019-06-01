@@ -23,6 +23,7 @@ set( PROJECT_NAME "tcnaf")
 project( ${PROJECT_NAME} VERSION ${TCNAF_VERSION} DESCRIPTION "A toy compiler, part of a university project." )
 
 ## Include SS-CE.
+message( STATUS "******************************************************" )
 message( STATUS "Importing SS-CE..." )
 set( MODULE_TESTING OFF )
 set( MODULE_AI OFF )
@@ -30,11 +31,20 @@ set( MODULE_AI_SEARCH OFF )
 set( MODULE_AI_SEARCH_UNINFORMED OFF )
 set( MODULE_AI_SEARCH_INFORMED OFF )
 add_subdirectory("SS-CE" "SS-CE")
-message( STATUS "Done importing SS-CE." )
 include_directories( ${SSCE_EXPORT_INCLUDE} )
+message( STATUS "Done importing SS-CE." )
+message( STATUS "******************************************************" )
 
-## Generate source.
+## Find lexer.
+find_program( RE2C "re2c" )
+if( NOT RE2C )
+    message( SEND_ERROR "Could not find lexical analyzer!\nPlease install `re2c` and it to the path." )
+else()
+    message( "Found lexical analyzer: ${RE2C}" )
+endif()
 
+## Generate grammar parser.
+add_executable( lemon "${PROJECT_SOURCE_DIR}/tools/lemon.c" )
 
 ## Find sources.
 file( GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.c*" )
@@ -61,3 +71,4 @@ endif()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-expansion-to-defined -fvisibility=hidden" )
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexec-charset=UTF-8" )
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -masm=intel" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} -Wno-sized-deallocation" )
