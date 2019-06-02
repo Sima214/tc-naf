@@ -21,7 +21,9 @@ inline bool process_file(char* p) {
     // File is loaded in mem and ready to be processed.
     ssce::logi("Processing file `%s`(%zu bytes)...", p, fs);
     // Start compilation.
-    tcnaf::tokenize(input);
+    tcnaf::tokenize(input, fs);
+    // Clean up.
+    free(input);
     return true;
   }
   ssce::loge("Could not open file: `%s`!", p);

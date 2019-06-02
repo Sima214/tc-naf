@@ -42,7 +42,7 @@ if( NOT RE2C )
 else()
     message( "Found lexical analyzer: ${RE2C}" )
     add_custom_command(
-        COMMAND ${RE2C} -W -P -o "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" "${PROJECT_SOURCE_DIR}/src/tokenizer.l"
+        COMMAND ${RE2C} -W -o "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" "${PROJECT_SOURCE_DIR}/src/tokenizer.l"
         OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp"
         BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp"
         DEPENDS "${PROJECT_SOURCE_DIR}/src/tokenizer.l" 
