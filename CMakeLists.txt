@@ -52,13 +52,21 @@ endif()
 
 ## Generate grammar parser.
 add_executable( lemon "${PROJECT_SOURCE_DIR}/tools/lemon.c" )
+add_custom_command(
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/lemon" -p "-d${CMAKE_CURRENT_BINARY_DIR}" "-T${PROJECT_SOURCE_DIR}/tools/lempar.c" "${PROJECT_SOURCE_DIR}/src/parser.yy"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp" "${CMAKE_CURRENT_BINARY_DIR}/parser.h" "${CMAKE_CURRENT_BINARY_DIR}/parser.out"
+    DEPENDS "${PROJECT_SOURCE_DIR}/src/parser.yy" "${PROJECT_SOURCE_DIR}/tools/lempar.c"
+    COMMENT "Generating parser..." VERBATIM
+)
 
 ## Find sources.
 file( GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.c*" )
 include_directories( "${PROJECT_SOURCE_DIR}/src/" )
 
 ## Define the executable
-add_executable( ${PROJECT_NAME} ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" )
+add_executable( ${PROJECT_NAME} ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp" )
+add_dependencies( ${PROJECT_NAME} lemon )
 target_link_libraries( ${PROJECT_NAME} ssce )
 
 ## Compiler options.

@@ -4206,7 +4206,7 @@ void ReportTable(
   in = tplt_open(lemp);
   if(in == 0)
     return;
-  out = file_open(lemp, ".c", "wb");
+  out = file_open(lemp, ".cpp", "wb");
   if(out == 0) {
     fclose(in);
     return;
