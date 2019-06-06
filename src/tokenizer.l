@@ -1,3 +1,4 @@
+#include <parser.hpp>
 #include <tokenizer.hpp>
 
 #include <Logger.hpp>
@@ -16,17 +17,23 @@
 
 #define get_index(ptr, base) (((uintptr_t)ptr) - ((uintptr_t)base))
 
-#define PROGRESS                                                        \
-  double progress = ((double)get_index(pos, input)) / ((double)length); \
-  ssce::logi("Process %05.2lf%%", progress * 100);
+#define PROGRESS_UPDATE double progress = ((double)get_index(pos, input)) / ((double)length);
 
-#define RULE_END  \
-  PROGRESS;       \
-  prev_pos = pos; \
+#define PROGRESS_PRINT ssce::logi("Process %05.2lf%%", progress * 100);
+
+#define RULE_END_TOKEN \
+  PROGRESS_UPDATE      \
+  PROGRESS_PRINT       \
+  prev_pos = pos;      \
+  continue;
+
+#define RULE_END   \
+  PROGRESS_UPDATE; \
+  prev_pos = pos;  \
   continue;
 
 namespace tcnaf {
-bool tokenize(char* input, size_t length) {
+bool tokenize(char* input, size_t length, void* parser) {
   // Tokenizer 'state'.
   char* pos = input;
   char pos_tmp = '\0';
@@ -73,126 +80,126 @@ bool tokenize(char* input, size_t length) {
       }
       "class" {
         ssce::logd("PROGRAM");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "public static void" {
         ssce::logd("FUNCTION");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "(" {
         ssce::logd("PRNTH_OPEN");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       ")" {
         ssce::logd("PRNTH_CLOSE");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "{" {
         ssce::logd("BLOCK_START");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "}" {
         ssce::logd("BLOCK_END");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "," {
         ssce::logd("SEPARATOR");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       ";" {
         ssce::logd("EXPR_END");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "int" {
         ssce::logd("TYPE_INT");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "float" {
         ssce::logd("TYPE_FLOAT");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "==" {
         ssce::logd("CMP_EQ");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "!=" {
         ssce::logd("CMP_NEQ");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       ">=" {
         ssce::logd("CMP_GREATER_EQ");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "<=" {
         ssce::logd("CMP_LESS_EQ");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       ">" {
         ssce::logd("CMP_GREATER");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "<" {
         ssce::logd("CMP_LESS");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "=" {
         ssce::logd("OP_ASSIGNMENT");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "+" {
         ssce::logd("OP_ADDITION");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "-" {
         ssce::logd("OP_SUBTRACTION");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "*" {
         ssce::logd("OP_MULTIPLICATION");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "/" {
         ssce::logd("OP_DIVISION");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "while" {
         ssce::logd("BRANCH_WHILE");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "for" {
         ssce::logd("BRANCH_FOR");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "if" {
         ssce::logd("BRANCH_IF");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       "else" {
         ssce::logd("BRANCH_ELSE");
-        RULE_END;
+        RULE_END_TOKEN;
       }
       float {
         char* str = make_string(prev_pos, pos, pos_tmp);
         double value = std::atof(str);
         ssce::logd("float<%lf>", value);
         free_string(str, pos, pos_tmp);
-        RULE_END;
+        RULE_END_TOKEN;
       }
       integer {
         char* str = make_string(prev_pos, pos, pos_tmp);
         int64_t value = std::strtoll(str, NULL, 10);
         ssce::logd("int<%lld>", value);
         free_string(str, pos, pos_tmp);
-        RULE_END;
+        RULE_END_TOKEN;
       }
       id {
         char* id = make_string(prev_pos, pos, pos_tmp);
         ssce::logd("id<%s>", id);
         free_string(id, pos, pos_tmp);
-        RULE_END;
+        RULE_END_TOKEN;
       }
       null {
-        ssce::logi("Syntax OK!");
+        ssce::logi("Lexical Analysis OK!");
         return true;
       }
     */

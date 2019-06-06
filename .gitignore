@@ -164,3 +164,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Auto generated files
+src/tokens.hpp

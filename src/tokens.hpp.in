@@ -1,6 +1,0 @@
-#ifndef TCNAF_PARSER_HPP
-#define TCNAF_PARSER_HPP
-
-#include "@PARSER_TOKENS_FILE@"
-
-#endif /*TCNAF_PARSER_HPP*/

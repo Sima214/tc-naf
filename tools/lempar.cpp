@@ -1,10 +1,12 @@
 #include <parser.hpp>
+#include <tokenizer.hpp>
 
-#include <Logger.hpp>
 #include <GAlloc.hpp>
+#include <Logger.hpp>
 
 #include <cstddef>
 #include <cstdlib>
+
 /*
 ** 2000-05-29
 **
@@ -31,6 +33,7 @@
 */
 /************ Begin %include sections from the grammar ************************/
 %%
+namespace tcnaf {
 /**************** End of %include directives **********************************/
 
 /* These constants specify the various numeric values for terminal symbols
@@ -453,7 +456,7 @@ int ParseCoverage(FILE *out) {
       if(yycoverage[stateno][iLookAhead] == 0)
         nMissed++;
       if(out) {
-        fprintf(out, "State %d lookahead %s %s\n", stateno,
+        fprintf(out, "State %d lookahead %s %s", stateno,
                 yyTokenName[iLookAhead],
                 yycoverage[stateno][iLookAhead] ? "ok" : "missed");
       }
@@ -654,9 +657,9 @@ static YYACTIONTYPE yy_reduce(
   if(yyruleno < (int)(sizeof(yyRuleName) / sizeof(yyRuleName[0]))) {
     yysize = yyRuleInfoNRhs[yyruleno];
     if(yysize) {
-      TRACE("Reduce %d [%s], go to state %d.\n", yyruleno, yyRuleName[yyruleno], yymsp[yysize].stateno);
+      TRACE("Reduce %d [%s], go to state %d.", yyruleno, yyRuleName[yyruleno], yymsp[yysize].stateno);
     } else {
-      TRACE("Reduce %d [%s].\n", yyruleno, yyRuleName[yyruleno]);
+      TRACE("Reduce %d [%s].", yyruleno, yyRuleName[yyruleno]);
     }
   }
 
@@ -822,9 +825,9 @@ void parser_parse(
 
   yyact = yypParser->yytos->stateno;
   if(yyact < YY_MIN_REDUCE) {
-    TRACE("Input '%s' in state %d\n", yyTokenName[yymajor], yyact);
+    TRACE("Input '%s' in state %d", yyTokenName[yymajor], yyact);
   } else {
-    TRACE("Input '%s' with pending reduce %d\n", yyTokenName[yymajor], yyact - YY_MIN_REDUCE);
+    TRACE("Input '%s' with pending reduce %d", yyTokenName[yymajor], yyact - YY_MIN_REDUCE);
   }
 
   do {
@@ -849,7 +852,6 @@ void parser_parse(
       #ifdef YYERRORSYMBOL
         int yymx;
       #endif
-      TRACE("Syntax Error!");
       #ifdef YYERRORSYMBOL
         /* A syntax error has occurred.
          * The response to an error depends upon whether or not the
@@ -956,4 +958,5 @@ int parser_fallback(int iToken) {
     (void)iToken;
   #endif
   return 0;
+}
 }

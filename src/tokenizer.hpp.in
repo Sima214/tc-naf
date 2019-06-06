@@ -5,10 +5,10 @@
 
 namespace tcnaf {
 
-#include "/home/sima/Storage/projects/C/tc-naf/build/parser.h"
+#include "@PARSER_TOKENS_FILE@"
 
-struct TokenData {
-  TokenType token;
+struct Token {
+  int token_type;
 };
 
 bool tokenize(char* input, size_t length, void* parser);

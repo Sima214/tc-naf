@@ -4843,37 +4843,21 @@ void ReportTable(
 
 /* Generate a header file for the parser */
 void ReportHeader(struct lemon *lemp) {
-  FILE *out, *in;
+  FILE *out;
   const char *prefix;
-  char line[LINESIZE];
-  char pattern[LINESIZE];
   int i;
 
   if(lemp->tokenprefix)
     prefix = lemp->tokenprefix;
   else
     prefix = "";
-  in = file_open(lemp, ".h", "rb");
-  if(in) {
-    int nextChar;
-    for(i = 1; i < lemp->nterminal && fgets(line, LINESIZE, in); i++) {
-      snprintf(pattern, LINESIZE, "#define %s%-30s %3d\n",
-               prefix, lemp->symbols[i]->name, i);
-      if(strcmp(line, pattern))
-        break;
-    }
-    nextChar = fgetc(in);
-    fclose(in);
-    if(i == lemp->nterminal && nextChar == EOF) {
-      /* No change in the file.  Don't rewrite it. */
-      return;
-    }
-  }
   out = file_open(lemp, ".h", "wb");
   if(out) {
+    fprintf(out, "enum TokenType {\n");
     for(i = 1; i < lemp->nterminal; i++) {
-      fprintf(out, "#define %s%-30s %3d\n", prefix, lemp->symbols[i]->name, i);
+      fprintf(out, "  %s%s=%3d,\n", prefix, lemp->symbols[i]->name, i);
     }
+    fprintf(out, "};");
     fclose(out);
   }
   return;

@@ -53,12 +53,14 @@ endif()
 ## Generate grammar parser.
 add_executable( lemon "${PROJECT_SOURCE_DIR}/tools/lemon.c" )
 add_custom_command(
-    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/lemon" -p "-d${CMAKE_CURRENT_BINARY_DIR}" "-T${PROJECT_SOURCE_DIR}/tools/lempar.c" "${PROJECT_SOURCE_DIR}/src/parser.yy"
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/lemon" -p "-d${CMAKE_CURRENT_BINARY_DIR}" "-T${PROJECT_SOURCE_DIR}/tools/lempar.cpp" "${PROJECT_SOURCE_DIR}/src/parser.yy"
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp"
     BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp" "${CMAKE_CURRENT_BINARY_DIR}/parser.h" "${CMAKE_CURRENT_BINARY_DIR}/parser.out"
-    DEPENDS "${PROJECT_SOURCE_DIR}/src/parser.yy" "${PROJECT_SOURCE_DIR}/tools/lempar.c"
+    DEPENDS "${PROJECT_SOURCE_DIR}/src/parser.yy" "${PROJECT_SOURCE_DIR}/tools/lempar.cpp"
     COMMENT "Generating parser..." VERBATIM
 )
+set( PARSER_TOKENS_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h )
+configure_file( "${PROJECT_SOURCE_DIR}/src/tokenizer.hpp.in" "${PROJECT_SOURCE_DIR}/src/tokenizer.hpp" @ONLY )
 
 ## Find sources.
 file( GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.c*" )

@@ -1,10 +1,11 @@
+#include <parser.hpp>
 #include <tokenizer.hpp>
 
 #include <GAlloc.hpp>
 #include <Logger.hpp>
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 
 inline bool process_file(char* p) {
   FILE* f = fopen(p, "rb");
@@ -21,8 +22,11 @@ inline bool process_file(char* p) {
     // File is loaded in mem and ready to be processed.
     ssce::logi("Processing file `%s`(%zu bytes)...", p, fs);
     // Start compilation.
-    tcnaf::tokenize(input, fs);
+    void* parser = tcnaf::parser_alloc();
+    tcnaf::tokenize(input, fs, parser);
+    tcnaf::parser_parse(parser, 0, (tcnaf::TokenData){});
     // Clean up.
+    tcnaf::parser_free(parser);
     free(input);
     return true;
   }
