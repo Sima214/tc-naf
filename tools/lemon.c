@@ -4855,7 +4855,7 @@ void ReportHeader(struct lemon *lemp) {
   if(out) {
     fprintf(out, "enum TokenType {\n");
     for(i = 1; i < lemp->nterminal; i++) {
-      fprintf(out, "  %s%s=%3d,\n", prefix, lemp->symbols[i]->name, i);
+      fprintf(out, "  %s%s = %d%s\n", prefix, lemp->symbols[i]->name, i, (i + 1) != lemp->nterminal? "," : "");
     }
     fprintf(out, "};");
     fclose(out);

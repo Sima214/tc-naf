@@ -17,19 +17,18 @@
 
 #define get_index(ptr, base) (((uintptr_t)ptr) - ((uintptr_t)base))
 
-#define PROGRESS_UPDATE double progress = ((double)get_index(pos, input)) / ((double)length);
+#define PROGRESS_PRINT                                                  \
+  double progress = ((double)get_index(pos, input)) / ((double)length); \
+  ssce::logi("Process %05.2lf%%", progress * 100);
 
-#define PROGRESS_PRINT ssce::logi("Process %05.2lf%%", progress * 100);
+#define PARSE_PAYLOAD
 
-#define RULE_END_TOKEN \
-  PROGRESS_UPDATE      \
-  PROGRESS_PRINT       \
-  prev_pos = pos;      \
-  continue;
+#define PARSE(token) \
+  PROGRESS_REPORT    \
+  CONTINUE
 
-#define RULE_END   \
-  PROGRESS_UPDATE; \
-  prev_pos = pos;  \
+#define CONTINUE  \
+  prev_pos = pos; \
   continue;
 
 namespace tcnaf {
@@ -70,17 +69,17 @@ bool tokenize(char* input, size_t length, void* parser) {
       newline {
         line_count++;
         current_line = pos;
-        RULE_END;
+        CONTINUE;
       }
       comment {
-        RULE_END;
+        CONTINUE;
       }
       ws+ {
-        RULE_END;
+        CONTINUE;
       }
       "class" {
         ssce::logd("PROGRAM");
-        RULE_END_TOKEN;
+        PARSE(CLASS);
       }
       "public static void" {
         ssce::logd("FUNCTION");

@@ -8,7 +8,7 @@ namespace tcnaf {
 #include "/home/sima/Storage/projects/C/tc-naf/build/parser.h"
 
 struct TokenData {
-  TokenType token;
+  int token_type;
 };
 
 bool tokenize(char* input, size_t length, void* parser);

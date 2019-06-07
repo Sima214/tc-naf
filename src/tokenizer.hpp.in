@@ -7,7 +7,7 @@ namespace tcnaf {
 
 #include "@PARSER_TOKENS_FILE@"
 
-struct Token {
+struct TokenData {
   int token_type;
 };
 
