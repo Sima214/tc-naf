@@ -1,11 +1,13 @@
 #include <parser.hpp>
 #include <tokenizer.hpp>
 
+#include <GAlloc.hpp>
 #include <Logger.hpp>
 
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <string>
 
 #define make_string(start, end, tmp) ({ \
   tmp = *end;                           \
@@ -21,10 +23,31 @@
   double progress = ((double)get_index(pos, input)) / ((double)length); \
   ssce::logi("Process %05.2lf%%", progress * 100);
 
-#define PARSE_PAYLOAD
+#define PARSE_INT(p, v)                     \
+  TokenData tk = {TOKEN_CONST_INTEGER, {}}; \
+  tk.extra_data.const_int = v;              \
+  parser_parse(p, tk.token_type, tk);       \
+  PROGRESS_PRINT                            \
+  CONTINUE
 
-#define PARSE(token) \
-  PROGRESS_REPORT    \
+#define PARSE_FLT(p, v)                   \
+  TokenData tk = {TOKEN_CONST_FLOAT, {}}; \
+  tk.extra_data.const_flt = v;            \
+  parser_parse(p, tk.token_type, tk);     \
+  PROGRESS_PRINT                          \
+  CONTINUE
+
+#define PARSE_STR(p, v)               \
+  TokenData tk = {TOKEN_ID, {}};      \
+  tk.extra_data.const_str = v;        \
+  parser_parse(p, tk.token_type, tk); \
+  PROGRESS_PRINT                      \
+  CONTINUE
+
+#define PARSE(p, token)               \
+  TokenData tk = {TOKEN_##token, {}}; \
+  parser_parse(p, tk.token_type, tk); \
+  PROGRESS_PRINT                      \
   CONTINUE
 
 #define CONTINUE  \
@@ -78,124 +101,97 @@ bool tokenize(char* input, size_t length, void* parser) {
         CONTINUE;
       }
       "class" {
-        ssce::logd("PROGRAM");
-        PARSE(CLASS);
+        PARSE(parser, CLASS);
       }
       "public static void" {
-        ssce::logd("FUNCTION");
-        RULE_END_TOKEN;
+        PARSE(parser, FUNCTION);
       }
       "(" {
-        ssce::logd("PRNTH_OPEN");
-        RULE_END_TOKEN;
+        PARSE(parser, PRNTH_OPEN);
       }
       ")" {
-        ssce::logd("PRNTH_CLOSE");
-        RULE_END_TOKEN;
+        PARSE(parser, PRNTH_CLOSE);
       }
       "{" {
-        ssce::logd("BLOCK_START");
-        RULE_END_TOKEN;
+        PARSE(parser, BLOCK_START);
       }
       "}" {
-        ssce::logd("BLOCK_END");
-        RULE_END_TOKEN;
+        PARSE(parser, BLOCK_END);
       }
       "," {
-        ssce::logd("SEPARATOR");
-        RULE_END_TOKEN;
+        PARSE(parser, COMMA_SEP);
       }
       ";" {
-        ssce::logd("EXPR_END");
-        RULE_END_TOKEN;
+        PARSE(parser, STATEMENT_END);
       }
       "int" {
-        ssce::logd("TYPE_INT");
-        RULE_END_TOKEN;
+        PARSE(parser, TYPE_INTEGER);
       }
       "float" {
-        ssce::logd("TYPE_FLOAT");
-        RULE_END_TOKEN;
+        PARSE(parser, TYPE_FLOAT);
       }
       "==" {
-        ssce::logd("CMP_EQ");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_EQUAL);
       }
       "!=" {
-        ssce::logd("CMP_NEQ");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_NOT_EQUAL);
       }
       ">=" {
-        ssce::logd("CMP_GREATER_EQ");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_GREATER_EQUAL);
       }
       "<=" {
-        ssce::logd("CMP_LESS_EQ");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_LESS_EQUAL);
       }
       ">" {
-        ssce::logd("CMP_GREATER");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_GREATER);
       }
       "<" {
-        ssce::logd("CMP_LESS");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_LESS);
       }
       "=" {
-        ssce::logd("OP_ASSIGNMENT");
-        RULE_END_TOKEN;
+        PARSE(parser, ASSIGNMENT);
       }
       "+" {
-        ssce::logd("OP_ADDITION");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_ADD);
       }
       "-" {
-        ssce::logd("OP_SUBTRACTION");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_SUB);
       }
       "*" {
-        ssce::logd("OP_MULTIPLICATION");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_MUL);
       }
       "/" {
-        ssce::logd("OP_DIVISION");
-        RULE_END_TOKEN;
+        PARSE(parser, OP_DIV);
       }
       "while" {
-        ssce::logd("BRANCH_WHILE");
-        RULE_END_TOKEN;
+        PARSE(parser, WHILE);
       }
       "for" {
-        ssce::logd("BRANCH_FOR");
-        RULE_END_TOKEN;
+        PARSE(parser, FOR);
       }
       "if" {
-        ssce::logd("BRANCH_IF");
-        RULE_END_TOKEN;
+        PARSE(parser, IF);
       }
       "else" {
-        ssce::logd("BRANCH_ELSE");
-        RULE_END_TOKEN;
+        PARSE(parser, ELSE);
       }
       float {
         char* str = make_string(prev_pos, pos, pos_tmp);
         double value = std::atof(str);
-        ssce::logd("float<%lf>", value);
         free_string(str, pos, pos_tmp);
-        RULE_END_TOKEN;
+        PARSE_FLT(parser, value);
       }
       integer {
         char* str = make_string(prev_pos, pos, pos_tmp);
         int64_t value = std::strtoll(str, NULL, 10);
-        ssce::logd("int<%lld>", value);
         free_string(str, pos, pos_tmp);
-        RULE_END_TOKEN;
+        PARSE_INT(parser, value);
       }
       id {
         char* id = make_string(prev_pos, pos, pos_tmp);
-        ssce::logd("id<%s>", id);
+        std::string* value = new std::string(id);
         free_string(id, pos, pos_tmp);
-        RULE_END_TOKEN;
+        PARSE_STR(parser, value);
       }
       null {
         ssce::logi("Lexical Analysis OK!");

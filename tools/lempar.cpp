@@ -3,6 +3,7 @@
 
 #include <GAlloc.hpp>
 #include <Logger.hpp>
+#include <Macros.h>
 
 #include <cstddef>
 #include <cstdlib>
@@ -347,12 +348,13 @@ void *parser_alloc() {
 ** directives of the input grammar.
 */
 static void yy_destructor(
-  yyParser *yypParser, /* The parser */
-  YYCODETYPE yymajor, /* Type code for object to destroy */
-  YYMINORTYPE *yypminor /* The object to be destroyed */
+  MARK_UNUSED yyParser *yypParser, /* The parser */
+  MARK_UNUSED YYCODETYPE yymajor, /* Type code for object to destroy */
+  MARK_UNUSED YYMINORTYPE *yypminor /* The object to be destroyed */
 ) {
   ParseARG_FETCH
-    ParseCTX_FETCH switch(yymajor) {
+  ParseCTX_FETCH
+  switch(yymajor) {
     /* Here is inserted the actions which take place when a
     ** terminal or non-terminal is destroyed.  This can happen
     ** when the symbol is popped from the stack during a

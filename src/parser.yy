@@ -13,6 +13,8 @@
 %left OP_ADD OP_SUB.
 %left OP_MUL OP_DIV.
 %nonassoc OP_EQUAL OP_LESS OP_GREATER OP_LESS_EQUAL OP_GREATER_EQUAL OP_NOT_EQUAL.
+// For some reason lemon was thinking these were non terminals. This fixes it.
+%nonassoc TYPE_INTEGER TYPE_FLOAT CONST_INTEGER CONST_FLOAT ID.
 
 %parse_accept {
     // Parse OK.
@@ -22,7 +24,7 @@
 %syntax_error {
     // Syntax Error.
     TokenData tk = TOKEN;
-    ssce::loge("Syntax error at todo:");
+    ssce::loge("Syntax error at %s:", yyTokenName[tk.token_type]);
 }
 
 %parse_failure {
@@ -98,7 +100,7 @@ term ::= factor.
 factor ::= PRNTH_OPEN expression PRNTH_CLOSE.
 factor ::= OP_SUB factor.
 factor ::= ID.
-factor ::= CONST.
+factor ::= const.
 
 comp_op ::= OP_EQUAL | OP_LESS | OP_GREATER | OP_LESS_EQUAL | OP_GREATER_EQUAL | OP_NOT_EQUAL.
 
@@ -107,3 +109,5 @@ add_op ::= OP_ADD | OP_SUB.
 mult_op ::= OP_MUL | OP_DIV.
 
 type ::= TYPE_INTEGER | TYPE_FLOAT.
+
+const ::= CONST_INTEGER | CONST_FLOAT.
