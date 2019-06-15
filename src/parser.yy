@@ -13,8 +13,6 @@
 %left OP_ADD OP_SUB.
 %left OP_MUL OP_DIV.
 %nonassoc OP_EQUAL OP_LESS OP_GREATER OP_LESS_EQUAL OP_GREATER_EQUAL OP_NOT_EQUAL.
-// For some reason lemon was thinking these were non terminals. This fixes it.
-%nonassoc TYPE_INTEGER TYPE_FLOAT CONST_INTEGER CONST_FLOAT ID.
 
 %parse_accept {
     // Parse OK.
@@ -56,7 +54,8 @@ statement ::= statement_declare.
 statement ::= statement_func_call.
 statement ::= statement_null.
 
-statement_declare ::= type id_list STATEMENT_END.
+statement_declare ::= TYPE_INTEGER id_list STATEMENT_END.
+statement_declare ::= TYPE_FLOAT id_list STATEMENT_END.
 
 // Right recursion?
 id_list ::= ID COMMA_SEP id_list.
@@ -100,14 +99,11 @@ term ::= factor.
 factor ::= PRNTH_OPEN expression PRNTH_CLOSE.
 factor ::= OP_SUB factor.
 factor ::= ID.
-factor ::= const.
+factor ::= CONST_INTEGER.
+factor ::= CONST_FLOAT.
 
 comp_op ::= OP_EQUAL | OP_LESS | OP_GREATER | OP_LESS_EQUAL | OP_GREATER_EQUAL | OP_NOT_EQUAL.
 
 add_op ::= OP_ADD | OP_SUB.
 
 mult_op ::= OP_MUL | OP_DIV.
-
-type ::= TYPE_INTEGER | TYPE_FLOAT.
-
-const ::= CONST_INTEGER | CONST_FLOAT.

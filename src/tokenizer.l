@@ -23,31 +23,41 @@
   double progress = ((double)get_index(pos, input)) / ((double)length); \
   ssce::logi("Process %05.2lf%%", progress * 100);
 
-#define PARSE_INT(p, v)                     \
-  TokenData tk = {TOKEN_CONST_INTEGER, {}}; \
-  tk.extra_data.const_int = v;              \
-  parser_parse(p, tk.token_type, tk);       \
-  PROGRESS_PRINT                            \
+#define DUMP_TOKEN_INT
+
+#define DUMP_TOKEN_FLT
+
+#define DUMP_TOKEN_STR
+
+#define DUMP_TOKEN_SHORT
+
+#define MAKE_METADATA ((TokenMetadata){(unsigned int)get_index(pos, input), (unsigned int)line_count})
+
+#define PARSE_INT(p, v)                                    \
+  TokenData tk = {TOKEN_CONST_INTEGER, MAKE_METADATA, {}}; \
+  tk.extra_data.const_int = v;                             \
+  parser_parse(p, tk.token_type, tk);                      \
+  PROGRESS_PRINT                                           \
   CONTINUE
 
-#define PARSE_FLT(p, v)                   \
-  TokenData tk = {TOKEN_CONST_FLOAT, {}}; \
-  tk.extra_data.const_flt = v;            \
-  parser_parse(p, tk.token_type, tk);     \
-  PROGRESS_PRINT                          \
+#define PARSE_FLT(p, v)                                  \
+  TokenData tk = {TOKEN_CONST_FLOAT, MAKE_METADATA, {}}; \
+  tk.extra_data.const_flt = v;                           \
+  parser_parse(p, tk.token_type, tk);                    \
+  PROGRESS_PRINT                                         \
   CONTINUE
 
-#define PARSE_STR(p, v)               \
-  TokenData tk = {TOKEN_ID, {}};      \
-  tk.extra_data.const_str = v;        \
-  parser_parse(p, tk.token_type, tk); \
-  PROGRESS_PRINT                      \
+#define PARSE_STR(p, v)                         \
+  TokenData tk = {TOKEN_ID, MAKE_METADATA, {}}; \
+  tk.extra_data.const_str = v;                  \
+  parser_parse(p, tk.token_type, tk);           \
+  PROGRESS_PRINT                                \
   CONTINUE
 
-#define PARSE(p, token)               \
-  TokenData tk = {TOKEN_##token, {}}; \
-  parser_parse(p, tk.token_type, tk); \
-  PROGRESS_PRINT                      \
+#define PARSE(p, token)                              \
+  TokenData tk = {TOKEN_##token, MAKE_METADATA, {}}; \
+  parser_parse(p, tk.token_type, tk);                \
+  PROGRESS_PRINT                                     \
   CONTINUE
 
 #define CONTINUE  \

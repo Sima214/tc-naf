@@ -1,6 +1,8 @@
 #ifndef TCNAF_TOKEN_HPP
 #define TCNAF_TOKEN_HPP
 
+#include <Macros.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -8,6 +10,11 @@
 namespace tcnaf {
 
 #include "/home/sima/Storage/projects/C/tc-naf/build/parser.h"
+
+struct MARK_PACKED TokenMetadata {
+  unsigned int column:24;
+  u_int32_t line;
+};
 
 union TokenExtra {
   int64_t const_int;
@@ -18,6 +25,7 @@ union TokenExtra {
 
 struct TokenData {
   TokenType token_type:8;
+  TokenMetadata meta_data;
   TokenExtra extra_data;
 };
 

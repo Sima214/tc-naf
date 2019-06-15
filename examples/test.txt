@@ -1,0 +1,8 @@
+class Test1 {
+    public static void main() {
+        int a, b, c;
+        a = 2;
+        b = 13;
+        println(a);
+    }
+}

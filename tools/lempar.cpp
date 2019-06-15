@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <string>
 
 /*
 ** 2000-05-29
@@ -753,7 +754,7 @@ static void yy_parse_failed(yyParser *yypParser /* The parser */) {
 /*
 ** The following code executes when a syntax error first occurs.
 */
-static void yy_syntax_error(yyParser *yypParser/* The parser */, int yymajor/* The major type of the error token */, ParseTOKENTYPE yyminor /* The minor type of the error token */) {
+static void yy_syntax_error(MARK_UNUSED yyParser *yypParser/* The parser */, MARK_UNUSED int yymajor/* The major type of the error token */, ParseTOKENTYPE yyminor /* The minor type of the error token */) {
   ParseARG_FETCH
   ParseCTX_FETCH
   #define TOKEN yyminor
@@ -939,11 +940,11 @@ void parser_parse(
     }
   } while(yypParser->yytos > yypParser->yystack);
   yyStackEntry *i;
-  TRACE("Return. Stack=[");
+  TRACE("Stack={");
   for(i = &yypParser->yystack[1]; i <= yypParser->yytos; i++) {
-    TRACE("\t%s", yyTokenName[i->major]);
+    TRACE("  %s", yyTokenName[i->major]);
   }
-  TRACE("]");
+  TRACE("}");
   return;
 }
 

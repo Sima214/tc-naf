@@ -53,7 +53,7 @@ endif()
 ## Generate grammar parser.
 add_executable( lemon "${PROJECT_SOURCE_DIR}/tools/lemon.c" )
 add_custom_command(
-    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/lemon" "-d${CMAKE_CURRENT_BINARY_DIR}" "-T${PROJECT_SOURCE_DIR}/tools/lempar.cpp" "${PROJECT_SOURCE_DIR}/src/parser.yy"
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/lemon" -p "-d${CMAKE_CURRENT_BINARY_DIR}" "-T${PROJECT_SOURCE_DIR}/tools/lempar.cpp" "${PROJECT_SOURCE_DIR}/src/parser.yy"
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp"
     BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp" "${CMAKE_CURRENT_BINARY_DIR}/parser.h" "${CMAKE_CURRENT_BINARY_DIR}/parser.out"
     DEPENDS "${PROJECT_SOURCE_DIR}/src/parser.yy" "${PROJECT_SOURCE_DIR}/tools/lempar.cpp"
