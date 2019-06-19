@@ -1,8 +1,16 @@
 class Test1 {
     public static void main() {
-        int a, b, c;
+        int a, b, c, i;
         a = 2;
         b = 13;
         println(a);
+        c = a + b - 7;
+        for(i = 0; i < 16; i = i + 1) {
+            a = a + i;
+            println(a / 2.4);
+        }
+        if(c > 0) {
+            println(c);
+        }
     }
 }

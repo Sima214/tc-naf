@@ -1,6 +1,7 @@
 #ifndef TCNAF_TOKEN_HPP
 #define TCNAF_TOKEN_HPP
 
+#include <GAlloc.hpp>
 #include <Macros.h>
 
 #include <cstddef>

@@ -31,7 +31,7 @@
 
 #define DUMP_TOKEN_SHORT
 
-#define MAKE_METADATA ((TokenMetadata){(unsigned int)get_index(pos, input), (unsigned int)line_count})
+#define MAKE_METADATA ((TokenMetadata){(unsigned int)get_index(pos, current_line), (unsigned int)line_count})
 
 #define PARSE_INT(p, v)                                    \
   TokenData tk = {TOKEN_CONST_INTEGER, MAKE_METADATA, {}}; \
@@ -51,6 +51,7 @@
   TokenData tk = {TOKEN_ID, MAKE_METADATA, {}}; \
   tk.extra_data.const_str = v;                  \
   parser_parse(p, tk.token_type, tk);           \
+  delete v;                                     \
   PROGRESS_PRINT                                \
   CONTINUE
 

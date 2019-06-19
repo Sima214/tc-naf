@@ -10,10 +10,6 @@
 
 %token_type { TokenData }
 
-%left OP_ADD OP_SUB.
-%left OP_MUL OP_DIV.
-%nonassoc OP_EQUAL OP_LESS OP_GREATER OP_LESS_EQUAL OP_GREATER_EQUAL OP_NOT_EQUAL.
-
 %parse_accept {
     // Parse OK.
     ssce::logi("Syntax Analysis OK!");
@@ -22,7 +18,7 @@
 %syntax_error {
     // Syntax Error.
     TokenData tk = TOKEN;
-    ssce::loge("Syntax error at %s:", yyTokenName[tk.token_type]);
+    ssce::loge("Invalid token `%s` at %u:%u", yyTokenName[tk.token_type], tk.meta_data.line, tk.meta_data.column);
 }
 
 %parse_failure {
@@ -86,7 +82,7 @@ statement_if ::= IF PRNTH_OPEN expression_bool PRNTH_CLOSE statement_else.
 statement_else ::= ELSE statement.
 statement_else ::= .
 
-statement_func_call ::= ID PRNTH_OPEN PRNTH_CLOSE.
+statement_func_call ::= ID PRNTH_OPEN expression PRNTH_CLOSE.
 
 expression_bool ::= expression comp_op expression.
 
@@ -102,8 +98,15 @@ factor ::= ID.
 factor ::= CONST_INTEGER.
 factor ::= CONST_FLOAT.
 
-comp_op ::= OP_EQUAL | OP_LESS | OP_GREATER | OP_LESS_EQUAL | OP_GREATER_EQUAL | OP_NOT_EQUAL.
+comp_op ::= OP_EQUAL.
+comp_op ::= OP_LESS.
+comp_op ::= OP_GREATER.
+comp_op ::= OP_LESS_EQUAL.
+comp_op ::= OP_GREATER_EQUAL.
+comp_op ::= OP_NOT_EQUAL.
 
-add_op ::= OP_ADD | OP_SUB.
+add_op ::= OP_ADD.
+add_op ::= OP_SUB.
 
-mult_op ::= OP_MUL | OP_DIV.
+mult_op ::= OP_MUL.
+mult_op ::= OP_DIV.
