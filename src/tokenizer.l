@@ -1,4 +1,5 @@
 #include <parser.hpp>
+#include <program.hpp>
 #include <tokenizer.hpp>
 
 #include <GAlloc.hpp>
@@ -36,28 +37,28 @@
 #define PARSE_INT(p, v)                                    \
   TokenData tk = {TOKEN_CONST_INTEGER, MAKE_METADATA, {}}; \
   tk.extra_data.const_int = v;                             \
-  parser_parse(p, tk.token_type, tk);                      \
+  parser_parse(p, tk.token_type, tk, program);             \
   PROGRESS_PRINT                                           \
   CONTINUE
 
 #define PARSE_FLT(p, v)                                  \
   TokenData tk = {TOKEN_CONST_FLOAT, MAKE_METADATA, {}}; \
   tk.extra_data.const_flt = v;                           \
-  parser_parse(p, tk.token_type, tk);                    \
+  parser_parse(p, tk.token_type, tk, program);           \
   PROGRESS_PRINT                                         \
   CONTINUE
 
 #define PARSE_STR(p, v)                         \
   TokenData tk = {TOKEN_ID, MAKE_METADATA, {}}; \
   tk.extra_data.const_str = v;                  \
-  parser_parse(p, tk.token_type, tk);           \
+  parser_parse(p, tk.token_type, tk, program);  \
   delete v;                                     \
   PROGRESS_PRINT                                \
   CONTINUE
 
 #define PARSE(p, token)                              \
   TokenData tk = {TOKEN_##token, MAKE_METADATA, {}}; \
-  parser_parse(p, tk.token_type, tk);                \
+  parser_parse(p, tk.token_type, tk, program);       \
   PROGRESS_PRINT                                     \
   CONTINUE
 
@@ -66,7 +67,7 @@
   continue;
 
 namespace tcnaf {
-bool tokenize(char* input, size_t length, void* parser) {
+bool tokenize(char* input, size_t length, void* parser, Program* program) {
   // Tokenizer 'state'.
   char* pos = input;
   char pos_tmp = '\0';
@@ -200,7 +201,7 @@ bool tokenize(char* input, size_t length, void* parser) {
       }
       id {
         char* id = make_string(prev_pos, pos, pos_tmp);
-        std::string* value = new std::string(id);
+        char* value = malloc();
         free_string(id, pos, pos_tmp);
         PARSE_STR(parser, value);
       }

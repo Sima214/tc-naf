@@ -1,6 +1,8 @@
 #ifndef TCNAF_TOKEN_HPP
 #define TCNAF_TOKEN_HPP
 
+#include <program.hpp>
+
 #include <GAlloc.hpp>
 #include <Macros.h>
 
@@ -30,7 +32,7 @@ struct TokenData {
   TokenExtra extra_data;
 };
 
-bool tokenize(char* input, size_t length, void* parser);
+bool tokenize(char* input, size_t length, void* parser, Program* program);
 }
 
 #endif /*TCNAF_TOKEN_HPP*/

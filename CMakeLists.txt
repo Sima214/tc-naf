@@ -65,6 +65,7 @@ configure_file( "${PROJECT_SOURCE_DIR}/src/tokenizer.hpp.in" "${PROJECT_SOURCE_D
 ## Find sources.
 file( GLOB_RECURSE SRCS "${PROJECT_SOURCE_DIR}/src/*.c*" )
 include_directories( "${PROJECT_SOURCE_DIR}/src/" )
+include_directories( "${PROJECT_SOURCE_DIR}/src/ast" )
 
 ## Define the executable
 add_executable( ${PROJECT_NAME} ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/tokenizer.cpp" "${CMAKE_CURRENT_BINARY_DIR}/parser.cpp" )

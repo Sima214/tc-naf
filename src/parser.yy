@@ -3,12 +3,17 @@
 %stack_size 160
 
 %include {
+    #include <expressions.hpp>
+    #include <program.hpp>
+    #include <statements.hpp>
     #include <tokenizer.hpp>
 
     #include <Logger.hpp>
 }
 
 %token_type { TokenData }
+
+%extra_argument { Program* prg }
 
 %parse_accept {
     // Parse OK.
@@ -34,7 +39,9 @@
 %start_symbol program
 
 // Lower case are non-terminal.
-program ::= CLASS ID BLOCK_START FUNCTION ID PRNTH_OPEN PRNTH_CLOSE code_block BLOCK_END.
+program ::= CLASS ID BLOCK_START FUNCTION ID(name) PRNTH_OPEN PRNTH_CLOSE code_block BLOCK_END. {
+    prg->setName(name.extra_data.const_str);
+}
 
 code_block ::= BLOCK_START statement_list BLOCK_END.
 
@@ -84,12 +91,19 @@ statement_else ::= .
 
 statement_func_call ::= ID PRNTH_OPEN expression PRNTH_CLOSE.
 
-expression_bool ::= expression comp_op expression.
+expression_bool ::= expression OP_EQUAL expression.
+expression_bool ::= expression OP_LESS expression.
+expression_bool ::= expression OP_GREATER expression.
+expression_bool ::= expression OP_LESS_EQUAL expression.
+expression_bool ::= expression OP_GREATER_EQUAL expression.
+expression_bool ::= expression OP_NOT_EQUAL expression.
 
-rval ::= rval add_op term.
+rval ::= rval OP_ADD term.
+rval ::= rval OP_SUB term.
 rval ::= term.
 
-term ::= term mult_op factor.
+term ::= term OP_MUL factor.
+term ::= term OP_DIV factor.
 term ::= factor.
 
 factor ::= PRNTH_OPEN expression PRNTH_CLOSE.
@@ -97,16 +111,3 @@ factor ::= OP_SUB factor.
 factor ::= ID.
 factor ::= CONST_INTEGER.
 factor ::= CONST_FLOAT.
-
-comp_op ::= OP_EQUAL.
-comp_op ::= OP_LESS.
-comp_op ::= OP_GREATER.
-comp_op ::= OP_LESS_EQUAL.
-comp_op ::= OP_GREATER_EQUAL.
-comp_op ::= OP_NOT_EQUAL.
-
-add_op ::= OP_ADD.
-add_op ::= OP_SUB.
-
-mult_op ::= OP_MUL.
-mult_op ::= OP_DIV.

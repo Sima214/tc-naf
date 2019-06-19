@@ -1,4 +1,6 @@
+
 #include <parser.hpp>
+#include <program.hpp>
 #include <tokenizer.hpp>
 
 #include <GAlloc.hpp>
@@ -6,9 +8,11 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 inline bool process_file(char* p) {
   FILE* f = fopen(p, "rb");
+  tcnaf::Program program;
   if(f != NULL) {
     // Find size of input file.
     fseek(f, 0, SEEK_END);
@@ -23,11 +27,19 @@ inline bool process_file(char* p) {
     ssce::logi("Processing file `%s`(%zu bytes)...", p, fs);
     // Start compilation.
     void* parser = tcnaf::parser_alloc();
-    tcnaf::tokenize(input, fs, parser);
-    tcnaf::parser_parse(parser, 0, (tcnaf::TokenData){});
+    tcnaf::tokenize(input, fs, parser, &program);
+    tcnaf::parser_parse(parser, 0, (tcnaf::TokenData){}, &program);
     // Clean up.
     tcnaf::parser_free(parser);
     free(input);
+    // Compile into binary.
+    if(program.isValid()) {
+      FILE* b = fopen("output.tcnaf", "wb");
+      char* bin = program.compile();
+      fwrite(bin, std::strlen(bin), 1, b);
+      free(bin);
+      fclose(b);
+    }
     return true;
   }
   ssce::loge("Could not open file: `%s`!", p);
