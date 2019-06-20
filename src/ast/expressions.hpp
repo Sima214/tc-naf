@@ -17,6 +17,7 @@ class ExpressionConstInteger : public BaseExpression {
     return RETTYPE_INT;
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionConstFloat : public BaseExpression {
@@ -28,17 +29,21 @@ class ExpressionConstFloat : public BaseExpression {
     return RETTYPE_FLOAT;
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionVariable : public BaseExpression {
  public:
-  std::string name;
-  ExpressionVariable(const char* id) :
-    name(id) {}
+  Variable reference;
+  ExpressionVariable(const char* id) {
+    reference.type = RETTYPE_UNKNOWN;
+    reference.name = id;
+  }
   virtual ReturnType getReturnType() {
-    return RETTYPE_UNKNOWN;
+    return reference.type;
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionNegate : public BaseExpression {
@@ -50,6 +55,7 @@ class ExpressionNegate : public BaseExpression {
     return expr->getReturnType();
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionAdd : public BaseExpression {
@@ -73,6 +79,7 @@ class ExpressionAdd : public BaseExpression {
     }
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionSub : public BaseExpression {
@@ -96,6 +103,7 @@ class ExpressionSub : public BaseExpression {
     }
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionMul : public BaseExpression {
@@ -119,6 +127,7 @@ class ExpressionMul : public BaseExpression {
     }
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionDiv : public BaseExpression {
@@ -142,6 +151,7 @@ class ExpressionDiv : public BaseExpression {
     }
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionLogical : public BaseExpression {
@@ -157,19 +167,23 @@ class ExpressionLogical : public BaseExpression {
     return RETTYPE_BOOL;
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class ExpressionAssignment : public BaseExpression {
  public:
-  std::string name;
+  Variable reference;
   BaseExpression* expr;
   ExpressionAssignment(const char* id, BaseExpression* e) :
-    name(id),
-    expr(e) {}
+    expr(e) {
+      reference.type = RETTYPE_UNKNOWN;
+      reference.name = id;
+    }
   virtual ReturnType getReturnType() {
     return RETTYPE_VOID;
   }
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 }  // namespace tcnaf

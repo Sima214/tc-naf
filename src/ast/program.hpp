@@ -50,7 +50,19 @@ class Program {
    * Returns true if the program is valid and ready to get compiled into a binary.
    */
   bool isValid() {
-    return !errored && name != NULL;
+    if(!errored && name != NULL) {
+      // Start semantic analysis.
+      for(auto const& func : func_list) {
+        StatementList* block = func.second;
+        VariableStore store;
+        if(!block->validate(store)) {
+          ssce::logf("Semantic analysis failed!");
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void addFunc(const char* name, StatementList* stml) {

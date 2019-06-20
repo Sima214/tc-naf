@@ -1,0 +1,7 @@
+class FullAst {
+    public static void main() {
+        float a;
+        a = 15;
+        println(a);
+    }
+}

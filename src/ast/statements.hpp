@@ -14,10 +14,13 @@ class StatementDeclare : public BaseStatement {
  public:
   ReturnType type;
   std::vector<std::string>* list;
+  std::vector<Variable> references;
   StatementDeclare(ReturnType t, std::vector<std::string>* l) :
     type(t),
     list(l) {}
+  void deallocate(tcnaf::VariableStore& store);
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class StatementFunction : public BaseStatement {
@@ -28,6 +31,7 @@ class StatementFunction : public BaseStatement {
     name(id),
     expression(expr) {}
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class StatementIfElse : public BaseStatement {
@@ -40,6 +44,7 @@ class StatementIfElse : public BaseStatement {
     stm_if(i),
     stm_else(e) {}
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class StatementForLoop : public BaseStatement {
@@ -54,6 +59,7 @@ class StatementForLoop : public BaseStatement {
     increment(l),
     block(b) {}
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class StatementWhileLoop : public BaseStatement {
@@ -64,6 +70,7 @@ class StatementWhileLoop : public BaseStatement {
     condition(c),
     block(b) {}
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 class StatementList : public BaseStatement {
@@ -74,6 +81,7 @@ class StatementList : public BaseStatement {
     list.push_back(e);
   };
   virtual std::string* compile(int level);
+  virtual bool validate(VariableStore&);
 };
 
 }  // namespace tcnaf

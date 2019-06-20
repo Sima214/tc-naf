@@ -51,10 +51,11 @@ std::string* tcnaf::StatementDeclare::compile(int level) {
   } else {
     ssce::logf("StatementDeclare invalid type!");
   }
-  for(std::vector<std::string>::iterator it = list->begin(); it != list->end(); it++) {
-    // TODO: add var address info.
-    str->append(*it);
-    if((it + 1) != list->end()) {
+  for(std::vector<tcnaf::Variable>::iterator it = references.begin(); it != references.end(); it++) {
+    str->append(it->name);
+    str->append(":");
+    str->append(std::to_string(it->uuid));
+    if((it + 1) != references.end()) {
       str->append(", ");
     }
   }
@@ -160,7 +161,7 @@ std::string* tcnaf::ExpressionConstFloat::compile(MARK_UNUSED int level) {
 std::string* tcnaf::ExpressionVariable::compile(MARK_UNUSED int level) {
   std::string* str = new std::string();
   str->append("[*");
-  str->append(name);
+  str->append(std::to_string(reference.uuid));
   str->append("]");
   return str;
 }
@@ -264,9 +265,21 @@ std::string* tcnaf::ExpressionLogical::compile(MARK_UNUSED int level) {
 std::string* tcnaf::ExpressionAssignment::compile(int level) {
   std::string* str = new std::string(tcnaf::getIdent(level));
   std::string* es = expr->compile(0);
-  // TODO: type casts.
-  str->append(name);
+  str->append("[*");
+  str->append(std::to_string(reference.uuid));
+  str->append("]");
   str->append("<-");
+  ReturnType expr_type = expr->getReturnType();
+  if(reference.type != expr_type) {
+    switch(reference.type) {
+      case RETTYPE_INT:
+        str->append("(int) ");
+        break;
+      case RETTYPE_FLOAT:
+        str->append("(float) ");
+        break;
+    }
+  }
   str->append(*es);
   delete es;
   return str;
