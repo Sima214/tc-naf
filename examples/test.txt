@@ -1,23 +1,33 @@
-class Test1 {
+class FullAst {
     public static void main() {
-        int a, b, c, i;
-        a = 2;
-        b = 13;
-        println(a);
-        c = a + b - 7;
-        for(i = 0; i < 16; i = i + 1) {
-            a = a + i;
-            println(a / 2.4);
+        int a, b;
+        float c;
+        a = 3;
+        b = 27;
+        c = b * 3 + c / -11.0;
+        println(c);
+        {
+            int nested;
+            float a;
+            if(nested == -1) {
+                println(c);
+            }
+            else {
+                println(b);
+            }
         }
-        if(c > 0) {
-            println(c);
+        int i;
+        i = 12;
+        while(i != 0) {
+            i = i - 1;
+            println(i);
         }
-        else {
+        for(i = 0; i < 12; i = i + 1) {
+            a = a*b;
             println(a);
         }
         for(;;) {
-            // Infinite.
-            println(b);
+            // Never getting out of this one.
         }
     }
 }

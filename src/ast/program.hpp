@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <string>
+#include <unordered_map>
 
 namespace tcnaf {
 
@@ -14,6 +15,7 @@ class Program {
  private:
   const char* name;
   bool errored;
+  std::unordered_map<std::string, StatementList*> func_list;
 
  public:
   Program(const char* id) :
@@ -27,8 +29,6 @@ class Program {
     errored(false){
       /* NOP */
     };
-
-  // TODO: Copy
 
   ~Program() {
     delete name;
@@ -53,12 +53,16 @@ class Program {
     return !errored && name != NULL;
   }
 
+  void addFunc(const char* name, StatementList* stml) {
+    func_list[name] = stml;
+  }
+
   /**
    * Returns a binary representation if this program.
    * 
    * Returned pointer should be freed by the caller.
    */
-  char* compile();
+  std::string* compile();
 };
 
 }  // namespace tcnaf

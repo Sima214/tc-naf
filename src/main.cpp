@@ -35,9 +35,9 @@ inline bool process_file(char* p) {
     // Compile into binary.
     if(program.isValid()) {
       FILE* b = fopen("output.tcnaf", "wb");
-      char* bin = program.compile();
-      fwrite(bin, std::strlen(bin), 1, b);
-      free(bin);
+      std::string* bin = program.compile();
+      fwrite(bin->c_str(), bin->length(), 1, b);
+      delete bin;
       fclose(b);
     }
     else {
@@ -50,6 +50,7 @@ inline bool process_file(char* p) {
 }
 
 int main(int argc, char* argv[]) {
+  //ssce::setLoggerLevel(LOGGER_DEBUG);
   if(argc == 1) {
     ssce::loge("No source files specified!");
     return EXIT_FAILURE;

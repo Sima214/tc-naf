@@ -203,7 +203,6 @@ bool tokenize(char* input, size_t length, void* parser, Program* program) {
         char* value = (char*) malloc(get_index(pos, prev_pos) + 1);
         std::strcpy(value, id);
         free_string(id, pos, pos_tmp);
-        ssce::logw("%p : %s", value, value);
         PARSE_STR(parser, value);
       }
       null {
