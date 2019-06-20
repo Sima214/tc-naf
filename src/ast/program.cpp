@@ -6,7 +6,7 @@
 #include <cstring>
 
 char* tcnaf::Program::compile() {
-  char* ret = (char*) malloc(name->length() + 1);
-  strcpy(ret, name->c_str());
+  char* ret = (char*) malloc(strlen(name) + 1);
+  strcpy(ret, name);
   return ret;
 };

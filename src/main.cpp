@@ -40,6 +40,9 @@ inline bool process_file(char* p) {
       free(bin);
       fclose(b);
     }
+    else {
+      ssce::logf("Could not compile program %s!", program.getName());
+    }
     return true;
   }
   ssce::loge("Could not open file: `%s`!", p);

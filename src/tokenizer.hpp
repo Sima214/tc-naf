@@ -8,7 +8,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <string>
 
 namespace tcnaf {
 
@@ -22,7 +21,7 @@ struct MARK_PACKED TokenMetadata {
 union TokenExtra {
   int64_t const_int;
   double const_flt;
-  std::string* const_str;
+  const char* const_str;
 };
 
 

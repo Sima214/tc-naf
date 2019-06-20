@@ -12,5 +12,12 @@ class Test1 {
         if(c > 0) {
             println(c);
         }
+        else {
+            println(a);
+        }
+        for(;;) {
+            // Infinite.
+            println(b);
+        }
     }
 }

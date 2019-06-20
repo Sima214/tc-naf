@@ -15,6 +15,9 @@
 
 %extra_argument { Program* prg }
 
+%nonassoc PRNTH_CLOSE.
+%nonassoc ELSE.
+
 %parse_accept {
     // Parse OK.
     ssce::logi("Syntax Analysis OK!");
@@ -84,10 +87,8 @@ statement_for ::= FOR PRNTH_OPEN expression_assign_opt STATEMENT_END expression_
 
 statement_while ::= WHILE PRNTH_OPEN expression_bool PRNTH_CLOSE statement.
 
-statement_if ::= IF PRNTH_OPEN expression_bool PRNTH_CLOSE statement_else.
-
-statement_else ::= ELSE statement.
-statement_else ::= .
+statement_if ::= IF PRNTH_OPEN expression_bool PRNTH_CLOSE statement.
+statement_if ::= IF PRNTH_OPEN expression_bool PRNTH_CLOSE statement ELSE statement.
 
 statement_func_call ::= ID PRNTH_OPEN expression PRNTH_CLOSE.
 

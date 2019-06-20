@@ -1,6 +1,8 @@
 #ifndef TCNAF_AST_ROOT_HPP
 #define TCNAF_AST_ROOT_HPP
 
+#include <statements.hpp>
+
 #include <GAlloc.hpp>
 
 #include <cstddef>
@@ -10,19 +12,19 @@ namespace tcnaf {
 
 class Program {
  private:
-  std::string* name;
-  bool valid;
+  const char* name;
+  bool errored;
 
  public:
-  Program(std::string* id) :
+  Program(const char* id) :
     name(id),
-    valid(true){
+    errored(false){
       /* NOP */
     };
 
   Program() :
     name(NULL),
-    valid(false){
+    errored(false){
       /* NOP */
     };
 
@@ -32,20 +34,23 @@ class Program {
     delete name;
   }
 
-  void setName(std::string* id) {
+  void setName(const char* id) {
     name = id;
-    valid = true;
   }
 
-  std::string* getName() {
+  const char* getName() {
     return name;
   }
 
+  void setErrored() {
+    errored = true;
+  }
+
   /**
-   * Returns true if the program is valid and ready to get compiled into binary.
+   * Returns true if the program is valid and ready to get compiled into a binary.
    */
   bool isValid() {
-    return valid;
+    return !errored && name != NULL;
   }
 
   /**

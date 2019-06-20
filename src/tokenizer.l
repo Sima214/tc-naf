@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <string>
+#include <cstring>
 
 #define make_string(start, end, tmp) ({ \
   tmp = *end;                           \
@@ -52,7 +52,6 @@
   TokenData tk = {TOKEN_ID, MAKE_METADATA, {}}; \
   tk.extra_data.const_str = v;                  \
   parser_parse(p, tk.token_type, tk, program);  \
-  delete v;                                     \
   PROGRESS_PRINT                                \
   CONTINUE
 
@@ -201,8 +200,10 @@ bool tokenize(char* input, size_t length, void* parser, Program* program) {
       }
       id {
         char* id = make_string(prev_pos, pos, pos_tmp);
-        char* value = malloc();
+        char* value = (char*) malloc(get_index(pos, prev_pos) + 1);
+        std::strcpy(value, id);
         free_string(id, pos, pos_tmp);
+        ssce::logw("%p : %s", value, value);
         PARSE_STR(parser, value);
       }
       null {
