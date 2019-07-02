@@ -1,0 +1,16 @@
+class VarPop {
+    public static void main() {
+        float a;
+        {
+            int a;
+            float b;
+            {
+                int a;
+                int c;
+            }
+            {
+                int d;
+            }
+        }
+    }
+}
