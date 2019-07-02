@@ -82,7 +82,7 @@ class VariableStore {
     list.pop_front();
   }
   std::size_t usage() {
-    
+    return 4;
   }
 };
 

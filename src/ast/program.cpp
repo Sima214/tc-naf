@@ -278,6 +278,8 @@ std::string* tcnaf::ExpressionAssignment::compile(int level) {
       case RETTYPE_FLOAT:
         str->append("(float) ");
         break;
+      default:
+        ssce::logf("Invalid variable type!");
     }
   }
   str->append(*es);

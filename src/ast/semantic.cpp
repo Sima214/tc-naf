@@ -7,6 +7,7 @@
 #include <Logger.hpp>
 #include <Macros.h>
 
+#include <algorithm>
 #include <cstdlib>
 #include <string>
 
@@ -139,14 +140,25 @@ bool tcnaf::StatementList::validate(tcnaf::VariableStore& store) {
     }
   }
   // Pop stack.
-  for(std::vector<BaseStatement*>::iterator it = list.end(); it != list.begin(); it--) {
-    BaseStatement* c = *it;
-    if(c == NULL) {
-      continue;
+  for(std::unordered_map<std::string, std::list<Variable>>::iterator it = store.store.begin(); it != store.store.end(); it++) {
+    std::string var_name = it->first;
+    std::list<Variable>& var_list = it->second;
+    std::size_t pop_count = 0;
+    for(std::list<Variable>::iterator it = var_list.begin(); it != var_list.end(); it--) {
+      Variable var = *it;
+      if(std::find(list.begin(), list.end(), var.declarator) != list.end()) {
+        // Pop variable.
+        ssce::logi("Popping %s:%d", var_name.c_str(), var.uuid);
+      } else {
+        // Stop.
+        break;
+      }
+      pop_count++;
     }
-    //if(StatementDeclare* d = dynamic_cast<StatementDeclare*>(c)) {
-    //  d->deallocate(store);
-    //}
+    // We shouldn't modify a list while we are iterating it, so we do that here.
+    for(/* NOP */; pop_count != 0; pop_count--) {
+      var_list.pop_front();
+    }
   }
   return true;
 }
